@@ -1,0 +1,18 @@
+package com.ra12.projecte1.projecte1;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Projecte1Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Projecte1Application.class, args);
+	}
+
+}
+
+// GET /api/GetAll/allActivitats
+// POST a /api/PostActivitat/csv
+// POST con un JSON (usando el RutaDTO) a /api/PostActivitat/activitat
+// GET a /api/GetActivitat/{id}
