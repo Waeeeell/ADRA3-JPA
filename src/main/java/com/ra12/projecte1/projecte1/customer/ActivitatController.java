@@ -3,10 +3,12 @@ package com.ra12.projecte1.projecte1.customer;
 import java.util.Optional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ra12.projecte1.projecte1.model.Activitat;
 import com.ra12.projecte1.projecte1.dto.RutaDTO;
+import com.ra12.projecte1.projecte1.repository.ActivitatRepository;
 import com.ra12.projecte1.projecte1.service.ActivitatServices;
 
 @RestController
@@ -15,6 +17,9 @@ public class ActivitatController {
 
     @Autowired
     private ActivitatServices activitatService;
+
+    @Autowired
+    private ActivitatRepository activitatRepository;
 
     @PostMapping("/PostActivitat/csv")
     public String uploadCSV(@RequestParam("file") MultipartFile file) {
@@ -41,9 +46,20 @@ public class ActivitatController {
         return activitatService.findById(id);
     }
 
-    @PutMapping("/PutActivitat/{id}")
-    public Activitat update(@PathVariable Long id, @RequestBody RutaDTO rutaDTO) {
-        return activitatService.update(id, rutaDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<Activitat> update(@PathVariable Long id, @RequestBody Activitat activitatActualizada) {
+        return activitatRepository.findById(id)
+            .map(existing -> {
+                existing.setNombreRuta(activitatActualizada.getNombreRuta());
+                existing.setDescripcio(activitatActualizada.getDescripcio());
+                existing.setDias(activitatActualizada.getDias());
+                existing.setHoras(activitatActualizada.getHoras());
+                existing.setMinuts(activitatActualizada.getMinuts());
+                existing.setDistancia(activitatActualizada.getDistancia());
+                activitatRepository.save(existing);
+                return ResponseEntity.ok(existing);
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/DeleteActivitat/{id}")
