@@ -46,20 +46,25 @@ public class ActivitatController {
         return activitatService.findById(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Activitat> update(@PathVariable Long id, @RequestBody Activitat activitatActualizada) {
-        return activitatRepository.findById(id)
-            .map(existing -> {
-                existing.setNombreRuta(activitatActualizada.getNombreRuta());
-                existing.setDescripcio(activitatActualizada.getDescripcio());
-                existing.setDias(activitatActualizada.getDias());
-                existing.setHoras(activitatActualizada.getHoras());
-                existing.setMinuts(activitatActualizada.getMinuts());
-                existing.setDistancia(activitatActualizada.getDistancia());
-                activitatRepository.save(existing);
-                return ResponseEntity.ok(existing);
-            })
-            .orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/PutActivitat/{id}")
+    public ResponseEntity<Activitat> actualizarActivitat(@PathVariable Long id,
+            @RequestBody Activitat activitatActualitzada) {
+        Optional<Activitat> activitatExistente = activitatRepository.findById(id);
+
+        if (activitatExistente.isPresent()) {
+            Activitat activitat = activitatExistente.get();
+            activitat.setNombreRuta(activitatActualitzada.getNombreRuta());
+            activitat.setDescripcio(activitatActualitzada.getDescripcio());
+            activitat.setDias(activitatActualitzada.getDias());
+            activitat.setHoras(activitatActualitzada.getHoras());
+            activitat.setMinuts(activitatActualitzada.getMinuts());
+            activitat.setDistancia(activitatActualitzada.getDistancia());
+
+            Activitat activitatGuardada = activitatRepository.save(activitat);
+            return ResponseEntity.ok(activitatGuardada);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/DeleteActivitat/{id}")
